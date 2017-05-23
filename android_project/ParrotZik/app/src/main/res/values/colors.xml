@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#777</color>
+    <color name="colorPrimaryDark">#222</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="darkBackground">#000</color>
+    <color name="darkTextColor">#fff</color>
+
+    <color name="orangeParrot">#fff28548</color>
+
+
+</resources>

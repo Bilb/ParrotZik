@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Parrot Zik</string>
+    <string name="title_activity_main">Parrot Zik</string>
+    <string name="noise_control">Contrôle du bruit</string>
+    <string name="equalizer">Egaliseur</string>
+    <string name="parrot_concert_hall">Parrot Concert Hall</string>
+    <string name="map_of_noise">Carte du bruit</string>
+
+</resources>

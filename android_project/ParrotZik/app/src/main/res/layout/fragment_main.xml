@@ -1,0 +1,175 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:background="@color/darkBackground"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.parrot.audric.parrotzik.MainActivity$PlaceholderFragment"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp">
+
+
+        <com.parrot.audric.parrotzik.ui.view.CircularProgressBar
+            android:id="@+id/custom_progressBar"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/equalizerButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.65999997"
+            app:progress="0"
+            app:progressBarThickness="7dp" />
+
+        <ImageButton
+            android:id="@+id/ancButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/anc_on"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="@+id/equalizerButton"
+            android:layout_marginTop="0dp"
+            app:layout_constraintRight_toLeftOf="@+id/equalizerButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+        <ImageButton
+            android:id="@+id/equalizerButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:src="@mipmap/eq_on"
+            android:foregroundGravity="center_horizontal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/titleEq" />
+
+        <ImageButton
+            android:id="@+id/concertHallButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/spase_on"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="@+id/equalizerButton"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="0dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/equalizerButton"
+            />
+
+        <TextView
+            android:id="@+id/titleEq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:paddingTop="10dp"
+            android:text="Egaliseur"
+            android:textColor="@color/darkTextColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.501" />
+
+        <TextView
+            android:id="@+id/titleConcertHall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="10dp"
+            android:text="Concert Hall"
+            android:textColor="@color/darkTextColor"
+            app:layout_constraintLeft_toLeftOf="@+id/concertHallButton"
+            app:layout_constraintRight_toRightOf="@+id/concertHallButton"
+            app:layout_constraintTop_toBottomOf="@+id/concertHallButton"
+            app:layout_constraintHorizontal_bias="0.47" />
+
+        <TextView
+            android:id="@+id/titleAnc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:paddingTop="10dp"
+            android:text="Contrôle du bruit"
+            android:textColor="@color/darkTextColor"
+            app:layout_constraintLeft_toLeftOf="@+id/ancButton"
+            app:layout_constraintRight_toRightOf="@+id/ancButton"
+            app:layout_constraintHorizontal_bias="0.466"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/ancButton" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-light"
+            android:text="%"
+            android:textColor="@color/darkTextColor"
+            android:textSize="25sp"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintLeft_toLeftOf="@+id/custom_progressBar"
+            app:layout_constraintRight_toRightOf="@+id/custom_progressBar"
+            app:layout_constraintTop_toBottomOf="@+id/percentageBatteryTv"
+            app:layout_constraintBottom_toBottomOf="@+id/custom_progressBar"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.3" />
+
+        <TextView
+            android:id="@+id/percentageBatteryTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-light"
+            android:text="46"
+            android:textColor="@color/darkTextColor"
+            android:textSize="60sp"
+            app:layout_constraintBottom_toBottomOf="@+id/custom_progressBar"
+            app:layout_constraintLeft_toLeftOf="@+id/custom_progressBar"
+            app:layout_constraintRight_toRightOf="@+id/custom_progressBar"
+            app:layout_constraintTop_toTopOf="@+id/custom_progressBar" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/percentageBatteryTv"
+            app:layout_constraintLeft_toLeftOf="@+id/custom_progressBar"
+            app:layout_constraintRight_toRightOf="@+id/custom_progressBar"
+            app:layout_constraintTop_toTopOf="@+id/custom_progressBar"
+            app:srcCompat="@mipmap/battery"
+            app:layout_constraintVertical_bias="0.61" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

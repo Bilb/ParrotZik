@@ -1,4 +1,4 @@
-package com.parrot.audric.parrotzik;
+package com.parrot.audric.parrotzik.ui.activity;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 
+import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.ActivityMainBinding;
 import com.parrot.audric.parrotzik.ui.fragments.MainFragment;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

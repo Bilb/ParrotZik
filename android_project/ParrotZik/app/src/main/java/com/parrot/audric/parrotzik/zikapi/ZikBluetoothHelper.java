@@ -10,8 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.UUID;
 
-public class Bluetooth {
-    private  static final String TAG = "Bluetooth";
+public class ZikBluetoothHelper {
+    private  static final String TAG = "ZikBluetoothHelper";
     // Parrot Zik headphones MAC address regex (90:03:B7 is Parrot vendor id)
     private static final String MAC = "90:03:B7:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}";
 
@@ -84,7 +84,7 @@ public class Bluetooth {
 
                 Log.e(TAG, "Connected");
             } catch (Exception e2) {
-                Log.e(TAG, "Couldn't establish Bluetooth connection!");
+                Log.e(TAG, "Couldn't establish ZikBluetoothHelper connection!");
                 e2.printStackTrace();
             }
 

@@ -1,6 +1,5 @@
 package com.parrot.audric.parrotzik.zikapi;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -9,47 +8,38 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-/**
- * Created by audric on 21/05/17.
- */
-
-public class Connection {
-    private static final String TAG = "Connection";
+import java.io.StringReader;
 
 
-    private final Context context;
+public class ZikConnection {
+    private static final String TAG = "ZikConnection";
+
+
     private final BluetoothDevice device;
 
     private BluetoothSocket socket;
     private State state = new State();
-    private BluetoothAdapter bluetoothAdapter;
     private InputStream inputStream;
     private OutputStream outputStream;
 
     private Parser parser;
 
-    public Connection(BluetoothDevice device, Context context) {
+    public ZikConnection(BluetoothDevice device, Context context) {
         this.device = device;
-        this.context  = context;
-
-        this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
         parser = new Parser(state);
     }
 
 
     public boolean connect() {
-        Bluetooth bluetooth = new Bluetooth();
+        ZikBluetoothHelper zikBluetoothHelper = new ZikBluetoothHelper();
         try {
-            socket = bluetooth.connect(device);
+            socket = zikBluetoothHelper.connect(device);
 
             Log.w(TAG,"Connected ?: " + socket.isConnected());
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
-            if( write(new byte[] {0, 3, 0}))
-           //     skip(1024);
-            Log.i(TAG, " wrote init");
+            if(write(new byte[] {0, 3, 0}))
+                skip(3);
 
             return true;
         } catch (IOException e) {
@@ -60,20 +50,15 @@ public class Connection {
 
 
     private void read() {
-        Log.e(TAG, "skip before read... ");
 
-        skip(10);
+        skip(7);
         byte[] data = new byte[1024];
         try {
-            Log.e(TAG, "starting read: ");
 
             int size = inputStream.read(data);
             String s = new String(data, 0 , size);
-
-            Log.e(TAG, "read ret: " + s);
+            Log.d(TAG, "read ret: " + s);
             parser.parse(s);
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,10 +68,7 @@ public class Connection {
 
     private boolean skip(long i)  {
         try {
-            Log.e(TAG, "skipping " + i + " available: " + inputStream.available() + " skipped: " + inputStream.skip(i));
-
-            Log.e(TAG, "done skipping " + i);
-
+            inputStream.skip(i);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,12 +79,8 @@ public class Connection {
 
     private boolean write(byte[] data) {
         try {
-            Log.e(TAG, "write");
             outputStream.write(data);
-            Log.e(TAG, "flush");
             outputStream.flush();
-            Log.e(TAG, "end");
-
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,12 +89,35 @@ public class Connection {
     }
 
 
-    public void getBattery() {
-        Log.e(TAG, "getbattery");
+    public State.Battery getBattery() {
         write(Protocol.getRequest(Constants.BatteryGet));
+        read();
+
+        return state.getBattery();
+    }
+
+
+    public boolean getNoiseCancellationStatus() {
+        write(Protocol.getRequest(Constants.ANCEnableGet));
+        read();
+        return state.getNoiseCancellation();
+    }
+
+    public boolean setNoiseCancellationStatus(boolean enabled) {
+        if(write(Protocol.setRequest(Constants.ANCEnableSet, String.valueOf(enabled))))
+            state.setNoiseCancellation(enabled);
+
+        return state.getNoiseCancellation();
+    }
+
+    public void getEqualizerStatus() {
+        write(Protocol.getRequest(Constants.EqualizerEnabledGet));
         read();
     }
 
+    public void setEqualizerStatus(boolean enabled) {
+        write(Protocol.setRequest(Constants.EqualizerEnabledSet, String.valueOf(enabled)));
+    }
 
     public boolean isConnected() {
         return  socket != null && socket.isConnected();
@@ -135,6 +136,9 @@ public class Connection {
 
 
     public State getState() {
-        return state;//TODO make a copy
+        return state;
     }
+
+
+
 }

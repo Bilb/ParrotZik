@@ -10,7 +10,7 @@
         android:background="@color/darkBackground"
         android:fitsSystemWindows="true"
         android:paddingTop="10dp"
-        tools:context="com.parrot.audric.parrotzik.MainActivity">
+        tools:context="com.parrot.audric.parrotzik.ui.activity.MainActivity">
 
         <TextSwitcher
             android:id="@+id/titleTextSwitcher"

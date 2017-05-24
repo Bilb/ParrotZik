@@ -10,7 +10,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:background="@color/darkBackground"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.parrot.audric.parrotzik.MainActivity$PlaceholderFragment"
+        tools:context="com.parrot.audric.parrotzik.ui.activity.MainActivity$PlaceholderFragment"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="0dp">
 
@@ -35,11 +35,11 @@
 
         <ImageButton
             android:id="@+id/ancButton"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/anc_on"
-            android:background="@android:color/transparent"
+            android:src="@mipmap/anc"
             app:layout_constraintTop_toTopOf="@+id/equalizerButton"
             android:layout_marginTop="0dp"
             app:layout_constraintRight_toLeftOf="@+id/equalizerButton"
@@ -52,7 +52,7 @@
             android:layout_height="60dp"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
-            android:src="@mipmap/eq_on"
+            android:src="@mipmap/eq"
             android:foregroundGravity="center_horizontal"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -64,7 +64,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/spase_on"
+            android:src="@mipmap/sparse"
             android:background="@android:color/transparent"
             app:layout_constraintTop_toTopOf="@+id/equalizerButton"
             android:layout_marginTop="0dp"
@@ -147,7 +147,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
-            android:text="46"
+            android:text="--"
             android:textColor="@color/darkTextColor"
             android:textSize="60sp"
             app:layout_constraintBottom_toBottomOf="@+id/custom_progressBar"
@@ -156,7 +156,7 @@
             app:layout_constraintTop_toTopOf="@+id/custom_progressBar" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/chargingIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

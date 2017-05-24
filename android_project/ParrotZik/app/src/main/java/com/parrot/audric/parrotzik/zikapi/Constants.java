@@ -37,7 +37,7 @@ public class Constants {
 
 
     /*************
-     * Bluetooth *
+     * ZikBluetoothHelper *
      *************/
 
     public static final String FriendlynameGet = "/api/bluetooth/friendlyname/get";

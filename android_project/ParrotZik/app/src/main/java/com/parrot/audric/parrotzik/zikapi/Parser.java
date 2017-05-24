@@ -67,6 +67,7 @@ public class Parser {
     private void parseTag(XmlPullParser parser) throws IOException, XmlPullParserException {
         if(parser.getName().toLowerCase().equals("answer")) {
             parseAnswer(parser);
+            Log.i(TAG, "after parse : state: " +state);
         }
     }
 
@@ -74,23 +75,21 @@ public class Parser {
     private void parseAnswer(XmlPullParser parser) throws IOException, XmlPullParserException {
 
         parser.nextTag();
-        /*if (parser.getName().toLowerCase().equals("audio"))
+        if (parser.getName().toLowerCase().equals("audio"))
             parseAudio(parser);
-        else*/ if (parser.getName().toLowerCase().equals("system")) {
+        else if (parser.getName().toLowerCase().equals("system")) {
             parseSystem(parser);
         }
 
         parser.nextTag();
     }
 
-    private void parseAudio(XmlPullParser parser) throws Exception {
-
-        throw new Exception("TODO");
-        /*parser.nextTag();
+    private void parseAudio(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.nextTag();
         if (parser.getName().toLowerCase().equals("noise_cancellation"))
             parseNoiseCancellation(parser);
 
-        parser.nextTag();*/
+        parser.nextTag();
     }
 
 
@@ -104,15 +103,24 @@ public class Parser {
 
 
     private void parseBattery(XmlPullParser parser) throws IOException, XmlPullParserException {
-        state.setBatteryState(new String(parser.getAttributeValue(null, "state")));
-        try {
-            state.setBatteryLevel(new Integer(parser.getAttributeValue(null, "level")));
-        }
-        catch (NumberFormatException e) {
-            state.setBatteryLevel(-1);
+        String batteryStateString = new String(parser.getAttributeValue(null, "state"));
+        State.Battery.BatteryState batteryState = State.Battery.BatteryState.UNKNOW;
+        if(batteryStateString != null) {
+            batteryStateString = batteryStateString.toLowerCase();
+            if (batteryStateString.equals("charging"))
+                batteryState = State.Battery.BatteryState.CHARGING;
+            else if (batteryStateString.equals("in_use")) {
+                batteryState = State.Battery.BatteryState.IN_USE;
+            }
         }
 
-        Log.e(TAG, "after parse : state: " +state);
+        state.getBattery().state = batteryState;
+        try {
+            state.getBattery().level = new Integer(parser.getAttributeValue(null, "level"));
+        }
+        catch (NumberFormatException e) {
+            state.getBattery().level = -1;
+        }
     }
 
 

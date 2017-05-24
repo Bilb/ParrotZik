@@ -1,4 +1,4 @@
-package com.parrot.audric.parrotzik.ui;
+package com.parrot.audric.parrotzik.ui.view;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;

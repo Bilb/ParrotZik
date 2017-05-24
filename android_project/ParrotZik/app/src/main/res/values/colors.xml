@@ -8,6 +8,9 @@
     <color name="darkTextColor">#fff</color>
 
     <color name="orangeParrot">#fff28548</color>
+    <color name="tintNotConnected">#fff</color>
+    <color name="tintEnabled">#fff28548</color>
+    <color name="tintDisabled">#fff</color>
 
 
 </resources>

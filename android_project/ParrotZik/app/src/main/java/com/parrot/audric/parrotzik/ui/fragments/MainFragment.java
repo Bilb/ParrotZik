@@ -11,24 +11,21 @@ import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.FragmentMainBinding;
-import com.parrot.audric.parrotzik.ui.ViewUtils;
+import com.parrot.audric.parrotzik.ui.view.ColorUtils;
+import com.parrot.audric.parrotzik.ui.view.ViewUtils;
 import com.parrot.audric.parrotzik.zikapi.State;
 import com.parrot.audric.parrotzik.zikapi.ZikBluetoothHelper;
 import com.parrot.audric.parrotzik.zikapi.ZikConnection;
@@ -81,7 +78,20 @@ public class MainFragment extends Fragment {
         binding.titleEq.setTypeface(EasyFonts.robotoLight(getContext()));
 
 
+        binding.titleEq.setTextColor(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
+        binding.titleConcertHall.setTextColor(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
+        binding.titleAnc.setTextColor(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
 
+
+        binding.ancButton.setColorFilter(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
+        binding.concertHallButton.setColorFilter(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
+        binding.equalizerButton.setColorFilter(ColorUtils.getColor(getActivity(),
+                R.color.tintDisabled));
 
         return binding.getRoot();
     }
@@ -92,13 +102,11 @@ public class MainFragment extends Fragment {
         BluetoothAdapter.getDefaultAdapter().getProfileProxy(context, mProfileListener, BluetoothProfile.HEADSET);
 
 
-
         new Thread(new Runnable() {
             @Override
             public void run() {
                 BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
 
-                Log.e(TAG, "zik: " + zik);
                 if(zik != null) {
                     zikConnection = new ZikConnection(zik, context);
                     zikConnection.connect();

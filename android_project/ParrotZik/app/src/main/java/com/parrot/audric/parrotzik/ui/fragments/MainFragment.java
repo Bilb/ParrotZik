@@ -72,29 +72,6 @@ public class MainFragment extends Fragment {
         binding.titleAnc.setTypeface(EasyFonts.robotoLight(getContext()));
         binding.titleConcertHall.setTypeface(EasyFonts.robotoLight(getContext()));
         binding.titleEq.setTypeface(EasyFonts.robotoLight(getContext()));
-
-
-        int colorNotConnected = ColorUtils.getColor(getActivity(), R.color.tintNotConnected);
-
-
-        binding.titleEq.setTextColor(colorNotConnected);
-        binding.titleConcertHall.setTextColor(colorNotConnected);
-        binding.titleAnc.setTextColor(colorNotConnected);
-
-
-        binding.ancButton.setColorFilter(colorNotConnected);
-        binding.concertHallButton.setColorFilter(colorNotConnected);
-        binding.equalizerButton.setColorFilter(colorNotConnected);
-
-
-        setTagColor(binding.ancButton, colorNotConnected);
-        setTagColor(binding.concertHallButton, colorNotConnected);
-        setTagColor(binding.equalizerButton, colorNotConnected);
-
-        setTagColor(binding.titleAnc, colorNotConnected);
-        setTagColor(binding.titleConcertHall, colorNotConnected);
-        setTagColor(binding.titleEq, colorNotConnected);
-
         return binding.getRoot();
     }
 
@@ -108,93 +85,6 @@ public class MainFragment extends Fragment {
     public void onAttach(final Context context) {
         super.onAttach(context);
         BluetoothAdapter.getDefaultAdapter().getProfileProxy(context, mProfileListener, BluetoothProfile.HEADSET);
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
-
-                if(zik != null) {
-                    zikConnection = new ZikConnection(zik, context);
-                    zikConnection.connect();
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            zikConnection.refreshZikState(new ZikConnection.ZiKStateRefreshListnener() {
-                                @Override
-                                public void onZikStateRefreshed(final State state) {
-                                    final State.Battery zikBattery = zikConnection.getBattery();
-                                    if(zikBattery != null ) {
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                switch (zikBattery.state) {
-                                                    case CHARGING:
-                                                        binding.chargingIv.setVisibility(View.VISIBLE);
-                                                        break;
-                                                    default:
-                                                        binding.chargingIv.setVisibility(View.INVISIBLE);
-                                                        binding.customProgressBar.setProgressWithAnimation(zikBattery.level);
-                                                        ViewUtils.animateTextView(0, zikBattery.level, binding.percentageBatteryTv);
-                                                }
-
-                                                if(state.getNoiseCancellation())
-                                                    animateNoiseCancellationChanges(getResources().getColor(R.color.orangeParrot));
-                                                else
-                                                    animateNoiseCancellationChanges(getResources().getColor(R.color.colorPrimary));
-
-                                                if(state.getEqualizer())
-                                                    animateEqualizerChanges(getResources().getColor(R.color.orangeParrot));
-                                                else
-                                                    animateEqualizerChanges(getResources().getColor(R.color.colorPrimary));
-
-                                                if(state.getConcertHall())
-                                                    animateConcertHallChanges(getResources().getColor(R.color.orangeParrot));
-                                                else
-                                                    animateConcertHallChanges(getResources().getColor(R.color.colorPrimary));
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    });
-
-
-
-
-
-
-
-                    binding.ancButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            toggleAnc();
-                        }
-                    });
-
-                    binding.concertHallButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            toggleConcertHall();
-                        }
-                    });
-
-                    binding.equalizerButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            toggleEqualizer();
-                        }
-                    });
-
-
-
-                }
-            }
-        }).start();
     }
 
 
@@ -215,27 +105,27 @@ public class MainFragment extends Fragment {
         boolean currentAnc = zikConnection.toggleAnc();
 
         if(currentAnc)
-            animateNoiseCancellationChanges(getResources().getColor(R.color.orangeParrot));
+            animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateNoiseCancellationChanges(getResources().getColor(R.color.colorPrimary));
+            animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
     }
 
     private void toggleEqualizer() {
         boolean currentEqualizer = zikConnection.toggleEqualizer();
 
         if(currentEqualizer)
-            animateEqualizerChanges(getResources().getColor(R.color.orangeParrot));
+            animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateEqualizerChanges(getResources().getColor(R.color.colorPrimary));
+            animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
     }
 
     private void toggleConcertHall() {
         boolean currentConcertHall = zikConnection.toggleConcertHall();
 
         if(currentConcertHall)
-            animateConcertHallChanges(getResources().getColor(R.color.orangeParrot));
+            animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateConcertHallChanges(getResources().getColor(R.color.colorPrimary));
+            animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
     }
 
 
@@ -288,4 +178,112 @@ public class MainFragment extends Fragment {
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        int colorNotConnected = ColorUtils.getColor(getActivity(), R.color.tintNotConnected);
+
+
+        binding.titleEq.setTextColor(colorNotConnected);
+        binding.titleConcertHall.setTextColor(colorNotConnected);
+        binding.titleAnc.setTextColor(colorNotConnected);
+
+
+        binding.ancButton.setColorFilter(colorNotConnected);
+        binding.concertHallButton.setColorFilter(colorNotConnected);
+        binding.equalizerButton.setColorFilter(colorNotConnected);
+
+
+        setTagColor(binding.ancButton, colorNotConnected);
+        setTagColor(binding.concertHallButton, colorNotConnected);
+        setTagColor(binding.equalizerButton, colorNotConnected);
+
+        setTagColor(binding.titleAnc, colorNotConnected);
+        setTagColor(binding.titleConcertHall, colorNotConnected);
+        setTagColor(binding.titleEq, colorNotConnected);
+
+        binding.customProgressBar.setProgress(0);
+        
+
+        binding.ancButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(zikConnection != null && zikConnection.isConnected())
+                    toggleAnc();
+            }
+        });
+
+        binding.concertHallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(zikConnection != null && zikConnection.isConnected())
+                    toggleConcertHall();
+            }
+        });
+
+        binding.equalizerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(zikConnection != null && zikConnection.isConnected())
+                    toggleEqualizer();
+            }
+        });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
+
+                if (zik != null && (zikConnection == null || !zikConnection.isConnected())) {
+                    zikConnection = new ZikConnection(zik, getContext());
+                    zikConnection.connect();
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        zikConnection.refreshZikState(new ZikConnection.ZiKStateRefreshListnener() {
+                            @Override
+                            public void onZikStateRefreshed(final State state) {
+                                final State.Battery zikBattery = zikConnection.getBattery();
+                                if (zikBattery != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            switch (zikBattery.state) {
+                                                case CHARGING:
+                                                    binding.chargingIv.setVisibility(View.VISIBLE);
+                                                    break;
+                                                default:
+                                                    binding.chargingIv.setVisibility(View.INVISIBLE);
+                                                    binding.customProgressBar.setProgressWithAnimation(zikBattery.level);
+                                                    ViewUtils.animateTextView(0, zikBattery.level, binding.percentageBatteryTv);
+                                            }
+
+                                            if (state.getNoiseCancellation())
+                                                animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
+                                            else
+                                                animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
+
+                                            if (state.getEqualizer())
+                                                animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
+                                            else
+                                                animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
+
+                                            if (state.getConcertHall())
+                                                animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
+                                            else
+                                                animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
+    }
 }

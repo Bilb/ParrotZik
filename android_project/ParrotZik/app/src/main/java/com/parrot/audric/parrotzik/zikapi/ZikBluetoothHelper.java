@@ -20,11 +20,11 @@ public class ZikBluetoothHelper {
     private BluetoothSocket socket;
 
 
-    private BluetoothAdapter getDefaultAdapter() {
+    private static BluetoothAdapter getDefaultAdapter() {
         return BluetoothAdapter.getDefaultAdapter();
     }
 
-    private Set<BluetoothDevice> getBoundedDevice() {
+    private static Set<BluetoothDevice> getBoundedDevice() {
         BluetoothAdapter adapter = getDefaultAdapter();
 
         if(adapter == null) {
@@ -38,7 +38,7 @@ public class ZikBluetoothHelper {
     }
 
 
-    public BluetoothDevice getZikDevice() {
+    public static BluetoothDevice getZikDevice() {
         Set<BluetoothDevice> devices = getBoundedDevice();
 
         if(devices != null) {
@@ -59,7 +59,7 @@ public class ZikBluetoothHelper {
             BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -70,19 +70,15 @@ public class ZikBluetoothHelper {
 
         try {
             socket.connect();
-            Log.e(TAG,"Connected");
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
             try {
-                Log.e(TAG, "trying fallback...");
 
                 socket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
-                Log.i(TAG,"socket already connected? " + socket.isConnected());
                 if(!socket.isConnected())
                     socket.connect();
 
-                Log.e(TAG, "Connected");
             } catch (Exception e2) {
                 Log.e(TAG, "Couldn't establish ZikBluetoothHelper connection!");
                 e2.printStackTrace();

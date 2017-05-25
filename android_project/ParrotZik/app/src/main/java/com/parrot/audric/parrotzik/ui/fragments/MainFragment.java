@@ -4,29 +4,28 @@ package com.parrot.audric.parrotzik.ui.fragments;
  * Created by audric on 06/05/17.
  */
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
-import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
 import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.FragmentMainBinding;
+import com.parrot.audric.parrotzik.service.ZikIntent;
 import com.parrot.audric.parrotzik.ui.view.ColorUtils;
 import com.parrot.audric.parrotzik.ui.view.ViewUtils;
 import com.parrot.audric.parrotzik.zikapi.State;
@@ -41,38 +40,18 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
 
 
-    private ZikBluetoothHelper zikBluetoothHelperConnector;
+    private ZikBroadcastReceiver zikBroadcastReceiver;
 
-    private ZikConnection zikConnection;
 
     public MainFragment() {
-        zikBluetoothHelperConnector = new ZikBluetoothHelper();
     }
 
     public static MainFragment newInstance() {
         return new MainFragment();
     }
 
-    BluetoothHeadset mBluetoothHeadset;
-
     private boolean isLoadingFinished = false;
 
-
-
-    private BluetoothProfile.ServiceListener mProfileListener = new BluetoothProfile.ServiceListener() {
-        public void onServiceConnected(int profile, BluetoothProfile proxy) {
-            if (profile == BluetoothProfile.HEADSET) {
-                mBluetoothHeadset = (BluetoothHeadset) proxy;
-                Log.e(TAG, "got it");
-            }
-        }
-        public void onServiceDisconnected(int profile) {
-            if (profile == BluetoothProfile.HEADSET) {
-                mBluetoothHeadset = null;
-                Log.e(TAG, "lost it");
-            }
-        }
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,48 +72,57 @@ public class MainFragment extends Fragment {
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
-        BluetoothAdapter.getDefaultAdapter().getProfileProxy(context, mProfileListener, BluetoothProfile.HEADSET);
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        if(zikBroadcastReceiver == null)
+            zikBroadcastReceiver = new ZikBroadcastReceiver();
+        localBroadcastManager.registerReceiver(zikBroadcastReceiver, ZikIntent.getGlobalFilter());
     }
 
 
+    private class ZikBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.w(TAG, "localbroadcatreceiver action:  " + intent.getAction());
+        }
+    }
 
 
 
     @Override
     public void onDetach() {
         super.onDetach();
-        BluetoothAdapter.getDefaultAdapter().closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset);
-        if(zikConnection != null && zikConnection.isConnected())
-            zikConnection.close();
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.unregisterReceiver(zikBroadcastReceiver);
     }
 
 
 
     private void toggleAnc() {
-        boolean currentAnc = zikConnection.toggleAnc();
+        /*boolean currentAnc = zikConnection.toggleAnc();
 
         if(currentAnc)
             animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
+            animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));*/
     }
 
     private void toggleEqualizer() {
-        boolean currentEqualizer = zikConnection.toggleEqualizer();
+  /*      boolean currentEqualizer = zikConnection.toggleEqualizer();
 
         if(currentEqualizer)
             animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
+            animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));*/
     }
 
     private void toggleConcertHall() {
-        boolean currentConcertHall = zikConnection.toggleConcertHall();
+      /*  boolean currentConcertHall = zikConnection.toggleConcertHall();
 
         if(currentConcertHall)
             animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
+            animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));*/
     }
 
 
@@ -216,7 +204,7 @@ public class MainFragment extends Fragment {
         binding.percentageBatteryTv.setText("0");
 
 
-        binding.ancButton.setOnClickListener(new View.OnClickListener() {
+       /* binding.ancButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(zikConnection != null && zikConnection.isConnected())
@@ -239,7 +227,7 @@ public class MainFragment extends Fragment {
                     toggleEqualizer();
             }
         });
-
+*/
 
         final RotateAnimation animRotate = new RotateAnimation(0.0f, -358.0f,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -265,7 +253,7 @@ public class MainFragment extends Fragment {
                 if(isLoadingFinished) {
                     animation.cancel();
                     binding.customProgressBar.setProgress(0);
-                    updateUI(zikConnection.getState());
+                    //updateUI(zikConnection.getState());
                 }
             }
         });
@@ -273,7 +261,7 @@ public class MainFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
+                /*BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
                 if (zik != null) {
                     if(zikConnection == null || !zikConnection.isConnected()) {
                         zikConnection = new ZikConnection(zik, getContext());
@@ -294,7 +282,7 @@ public class MainFragment extends Fragment {
                 }
                 else {
                     isLoadingFinished = true;
-                }
+                }*/
             }
         }).start();
     }
@@ -302,7 +290,7 @@ public class MainFragment extends Fragment {
 
 
     private void updateUI(State state) {
-        final State.Battery zikBattery = zikConnection.getBattery();
+        /*final State.Battery zikBattery = zikConnection.getBattery();
         if (zikBattery != null) {
             switch (zikBattery.state) {
                 case CHARGING:
@@ -328,6 +316,6 @@ public class MainFragment extends Fragment {
                 animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
             else
                 animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
-        }
+        }*/
     }
 }

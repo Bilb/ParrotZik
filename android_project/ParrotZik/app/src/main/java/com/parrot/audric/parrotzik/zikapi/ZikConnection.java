@@ -24,21 +24,6 @@ public class ZikConnection {
     private State state = new State();
     private InputStream inputStream;
     private OutputStream outputStream;
-
-    private String xml10pattern = "[^"
-            + "\u0009\r\n"
-            + "\u0020-\uD7FF"
-            + "\uE000-\uFFFD"
-            + "\ud800\udc00-\udbff\udfff"
-            + "]";
-
-    private String xml11pattern = "[^"
-            + "\u0001-\uD7FF"
-            + "\uE000-\uFFFD"
-            + "\ud800\udc00-\udbff\udfff"
-            + "]+";
-
-
     private Parser parser;
 
     public ZikConnection(BluetoothDevice device, Context context) {

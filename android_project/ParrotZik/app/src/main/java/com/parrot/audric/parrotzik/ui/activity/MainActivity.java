@@ -1,5 +1,6 @@
 package com.parrot.audric.parrotzik.ui.activity;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.text.Html;
 
 import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.ActivityMainBinding;
+import com.parrot.audric.parrotzik.service.ZikService;
 import com.parrot.audric.parrotzik.ui.fragments.MainFragment;
 
 import java.util.Timer;
@@ -79,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
+
+        Intent intent = new Intent(MainActivity.this, ZikService.class);
+        startService(intent);
     }
 
 

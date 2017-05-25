@@ -88,6 +88,10 @@ public class Parser {
         parser.nextTag();
         if (parser.getName().toLowerCase().equals("noise_cancellation"))
             parseNoiseCancellation(parser);
+        else if (parser.getName().toLowerCase().equals("equalizer"))
+            parseEqualizer(parser);
+        else if (parser.getName().toLowerCase().equals("sound_effect"))
+            parseConcertHall(parser);
 
         parser.nextTag();
     }
@@ -127,6 +131,16 @@ public class Parser {
     private void parseNoiseCancellation(XmlPullParser parser)
             throws IOException, XmlPullParserException {
         state.setNoiseCancellation(Boolean.parseBoolean(parser.getAttributeValue(null, "enabled")));
+    }
+
+    private void parseEqualizer(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
+        state.setEqualizer(Boolean.parseBoolean(parser.getAttributeValue(null, "enabled")));
+    }
+
+    private void parseConcertHall(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
+        state.setConcertHall(Boolean.parseBoolean(parser.getAttributeValue(null, "enabled")));
     }
 
 }

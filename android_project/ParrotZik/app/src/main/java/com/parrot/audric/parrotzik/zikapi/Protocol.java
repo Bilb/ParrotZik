@@ -1,9 +1,5 @@
 package com.parrot.audric.parrotzik.zikapi;
 
-/**
- * Created by audric on 13/05/17.
- */
-
 public class Protocol {
     // Byte array to send to open a session with device
     public static final byte[] start = {0, 0, 0};

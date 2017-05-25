@@ -20,7 +20,7 @@ public class State {
 
     private Battery battery = new Battery();
 
-    private boolean noiseCancellation;
+    private boolean noiseCancellation, equalizer, concertHall;
 
 
     public Battery getBattery() {
@@ -32,9 +32,24 @@ public class State {
         return noiseCancellation;
     }
 
-
     public void setNoiseCancellation(boolean noiseCancellation) {
         this.noiseCancellation = noiseCancellation;
+    }
+
+    public boolean getEqualizer() {
+        return equalizer;
+    }
+
+    public void setEqualizer(boolean equalizer) {
+        this.equalizer = equalizer;
+    }
+
+    public boolean getConcertHall() {
+        return concertHall;
+    }
+
+    public void setConcertHall(boolean concertHall) {
+        this.concertHall = concertHall;
     }
 
 
@@ -43,6 +58,8 @@ public class State {
         return "State{" +
                 "battery=" + battery +
                 ", noiseCancellation=" + noiseCancellation +
+                ", equalizer=" + equalizer +
+                ", concertHall=" + concertHall +
                 '}';
     }
 }

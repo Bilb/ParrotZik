@@ -3,7 +3,10 @@ package com.parrot.audric.parrotzik.zikapi;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
+
+import com.parrot.audric.parrotzik.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,8 +118,23 @@ public class ZikConnection {
         read();
     }
 
-    public void setEqualizerStatus(boolean enabled) {
-        write(Protocol.setRequest(Constants.EqualizerEnabledSet, String.valueOf(enabled)));
+    public boolean setEqualizerStatus(boolean enabled) {
+        if(write(Protocol.setRequest(Constants.EqualizerEnabledSet, String.valueOf(enabled)))) {
+            state.setEqualizer(enabled);
+        }
+        return state.getEqualizer();
+    }
+
+    public void getConcertHallStatus() {
+        write(Protocol.getRequest(Constants.SoundEffectEnabledGet));
+        read();
+    }
+
+    public boolean setConcertHallStatus(boolean enabled) {
+        if(write(Protocol.setRequest(Constants.SoundEffectEnabledSet, String.valueOf(enabled)))) {
+            state.setConcertHall(enabled);
+        }
+        return state.getConcertHall();
     }
 
     public boolean isConnected() {
@@ -139,6 +157,56 @@ public class ZikConnection {
         return state;
     }
 
+
+
+
+    public void refreshZikState(final ZiKStateRefreshListnener listener) {
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getBattery();
+                getNoiseCancellationStatus();
+                getEqualizerStatus();
+                getConcertHallStatus();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onZikStateRefreshed(state);
+                    }
+                });
+            }
+        }).start();
+    }
+
+
+    public interface ZiKStateRefreshListnener {
+        void onZikStateRefreshed(State state);
+    }
+
+
+    public boolean toggleAnc() {
+        boolean currentAnc = getState().getNoiseCancellation();
+        currentAnc = setNoiseCancellationStatus(!currentAnc);
+
+        return currentAnc;
+    }
+
+    public boolean toggleEqualizer() {
+        boolean current = getState().getEqualizer();
+        current = setEqualizerStatus(!current);
+
+        return current;
+    }
+
+    public boolean toggleConcertHall() {
+        boolean current = getState().getConcertHall();
+        current = setConcertHallStatus(!current);
+
+        return current;
+    }
 
 
 }

@@ -213,6 +213,7 @@ public class MainFragment extends Fragment {
         setTagColor(binding.titleEq, colorNotConnected);
 
         binding.customProgressBar.setProgress(0);
+        binding.percentageBatteryTv.setText("0");
 
 
         binding.ancButton.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +264,7 @@ public class MainFragment extends Fragment {
             public void onAnimationRepeat(Animation animation) {
                 if(isLoadingFinished) {
                     animation.cancel();
+                    binding.customProgressBar.setProgress(0);
                     updateUI(zikConnection.getState());
                 }
             }
@@ -273,8 +275,11 @@ public class MainFragment extends Fragment {
             public void run() {
                 BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
                 if (zik != null) {
-                    zikConnection = new ZikConnection(zik, getContext());
-                    zikConnection.connect();
+                    if(zikConnection == null || !zikConnection.isConnected()) {
+                        zikConnection = new ZikConnection(zik, getContext());
+                        zikConnection.connect();
+                    }
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

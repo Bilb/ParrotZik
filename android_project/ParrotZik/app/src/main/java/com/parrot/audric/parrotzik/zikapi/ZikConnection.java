@@ -25,6 +25,20 @@ public class ZikConnection {
     private InputStream inputStream;
     private OutputStream outputStream;
 
+    private String xml10pattern = "[^"
+            + "\u0009\r\n"
+            + "\u0020-\uD7FF"
+            + "\uE000-\uFFFD"
+            + "\ud800\udc00-\udbff\udfff"
+            + "]";
+
+    private String xml11pattern = "[^"
+            + "\u0001-\uD7FF"
+            + "\uE000-\uFFFD"
+            + "\ud800\udc00-\udbff\udfff"
+            + "]+";
+
+
     private Parser parser;
 
     public ZikConnection(BluetoothDevice device, Context context) {
@@ -53,14 +67,13 @@ public class ZikConnection {
 
 
     private void read() {
-
-        skip(7);
         byte[] data = new byte[1024];
         try {
-
             int size = inputStream.read(data);
             String s = new String(data, 0 , size);
-            Log.d(TAG, "read ret: " + s);
+            int start = s.indexOf('<');
+            s = s.substring(start);
+            Log.d(TAG, "after filter: " + s);
             parser.parse(s);
         } catch (IOException e) {
             e.printStackTrace();

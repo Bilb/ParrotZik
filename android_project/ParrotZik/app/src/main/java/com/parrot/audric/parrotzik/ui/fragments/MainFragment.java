@@ -4,12 +4,9 @@ package com.parrot.audric.parrotzik.ui.fragments;
  * Created by audric on 06/05/17.
  */
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,12 +22,11 @@ import android.view.animation.RotateAnimation;
 
 import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.FragmentMainBinding;
-import com.parrot.audric.parrotzik.service.ZikIntent;
+import com.parrot.audric.parrotzik.service.ZikBroadcastIntent;
+import com.parrot.audric.parrotzik.ui.Intents;
 import com.parrot.audric.parrotzik.ui.view.ColorUtils;
 import com.parrot.audric.parrotzik.ui.view.ViewUtils;
 import com.parrot.audric.parrotzik.zikapi.State;
-import com.parrot.audric.parrotzik.zikapi.ZikBluetoothHelper;
-import com.parrot.audric.parrotzik.zikapi.ZikConnection;
 import com.vstechlab.easyfonts.EasyFonts;
 
 public class MainFragment extends Fragment {
@@ -43,6 +39,11 @@ public class MainFragment extends Fragment {
     private ZikBroadcastReceiver zikBroadcastReceiver;
 
 
+    private boolean isZikConnected = false;
+
+    private State zikState;
+
+
     public MainFragment() {
     }
 
@@ -50,7 +51,6 @@ public class MainFragment extends Fragment {
         return new MainFragment();
     }
 
-    private boolean isLoadingFinished = false;
 
 
     @Override
@@ -76,14 +76,29 @@ public class MainFragment extends Fragment {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         if(zikBroadcastReceiver == null)
             zikBroadcastReceiver = new ZikBroadcastReceiver();
-        localBroadcastManager.registerReceiver(zikBroadcastReceiver, ZikIntent.getGlobalFilter());
+        localBroadcastManager.registerReceiver(zikBroadcastReceiver, ZikBroadcastIntent.getGlobalFilter());
     }
 
 
     private class ZikBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.w(TAG, "localbroadcatreceiver action:  " + intent.getAction());
+            ZikBroadcastIntent zikBroadcastIntent = ZikBroadcastIntent.valueOf(intent.getAction());
+
+
+            Log.w(TAG, "localbroadcatreceiver action:  " + zikBroadcastIntent);
+
+            switch (zikBroadcastIntent) {
+                case ACTION_ZIK_CONNECTED:
+                    break;
+                case ACTION_ZIK_DISCONNECTED:
+                    isZikConnected = false;
+                    break;
+                case ACTION_ZIK_STATE_REFRESH:
+                    isZikConnected = true;
+                    zikState = intent.getParcelableExtra(Intents.INTENT_STATE);
+                    Log.i(TAG, "zikState: " + zikState);
+            }
         }
     }
 
@@ -117,7 +132,7 @@ public class MainFragment extends Fragment {
     }
 
     private void toggleConcertHall() {
-      /*  boolean currentConcertHall = zikConnection.toggleConcertHall();
+        /*boolean currentConcertHall = zikConnection.toggleConcertHall();
 
         if(currentConcertHall)
             animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
@@ -204,10 +219,10 @@ public class MainFragment extends Fragment {
         binding.percentageBatteryTv.setText("0");
 
 
-       /* binding.ancButton.setOnClickListener(new View.OnClickListener() {
+        binding.ancButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(zikConnection != null && zikConnection.isConnected())
+                if(isZikConnected)
                     toggleAnc();
             }
         });
@@ -215,7 +230,7 @@ public class MainFragment extends Fragment {
         binding.concertHallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(zikConnection != null && zikConnection.isConnected())
+                if(isZikConnected)
                     toggleConcertHall();
             }
         });
@@ -223,11 +238,11 @@ public class MainFragment extends Fragment {
         binding.equalizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(zikConnection != null && zikConnection.isConnected())
+                if(isZikConnected)
                     toggleEqualizer();
             }
         });
-*/
+
 
         final RotateAnimation animRotate = new RotateAnimation(0.0f, -358.0f,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -250,47 +265,19 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                if(isLoadingFinished) {
+                if(isZikConnected) {
                     animation.cancel();
                     binding.customProgressBar.setProgress(0);
-                    //updateUI(zikConnection.getState());
+                    updateUI(zikState);
                 }
             }
         });
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                /*BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
-                if (zik != null) {
-                    if(zikConnection == null || !zikConnection.isConnected()) {
-                        zikConnection = new ZikConnection(zik, getContext());
-                        zikConnection.connect();
-                    }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            zikConnection.refreshZikState(new ZikConnection.ZiKStateRefreshListnener() {
-                                @Override
-                                public void onZikStateRefreshed(final State state) {
-                                    isLoadingFinished = true;
-                                }
-                            });
-                        }
-                    });
-                }
-                else {
-                    isLoadingFinished = true;
-                }*/
-            }
-        }).start();
     }
 
 
 
     private void updateUI(State state) {
-        /*final State.Battery zikBattery = zikConnection.getBattery();
+        final State.Battery zikBattery = state.getBattery();
         if (zikBattery != null) {
             switch (zikBattery.state) {
                 case CHARGING:
@@ -316,6 +303,6 @@ public class MainFragment extends Fragment {
                 animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
             else
                 animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
-        }*/
+        }
     }
 }

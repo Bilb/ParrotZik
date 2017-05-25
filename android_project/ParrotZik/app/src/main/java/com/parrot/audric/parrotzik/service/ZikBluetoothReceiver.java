@@ -24,7 +24,7 @@ public class ZikBluetoothReceiver extends BroadcastReceiver {
                 case BluetoothAdapter.STATE_OFF:
                     Log.i(TAG, "state: off: " + state );
                     LocalBroadcastManager.getInstance(context).sendBroadcast(
-                            new Intent(ZikIntent.ACTION_ZIK_DISCONNECTED.toString())
+                            new Intent(ZikBroadcastIntent.ACTION_ZIK_DISCONNECTED.toString())
                     );
                     break;
                 default:
@@ -43,7 +43,7 @@ public class ZikBluetoothReceiver extends BroadcastReceiver {
                 Intent zikService = new Intent(context, ZikService.class);
                 context.stopService(zikService);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(
-                        new Intent(ZikIntent.ACTION_ZIK_DISCONNECTED.toString()));
+                        new Intent(ZikBroadcastIntent.ACTION_ZIK_DISCONNECTED.toString()));
 
             }
         }

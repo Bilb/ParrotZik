@@ -157,30 +157,11 @@ public class ZikConnection {
 
 
 
-    public void refreshZikState(final ZiKStateRefreshListnener listener) {
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getBattery();
-                getNoiseCancellationStatus();
-                getEqualizerStatus();
-                getConcertHallStatus();
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onZikStateRefreshed(state);
-                    }
-                });
-            }
-        }).start();
-    }
-
-
-    public interface ZiKStateRefreshListnener {
-        void onZikStateRefreshed(State state);
+    public void refreshZikState() {
+        getBattery();
+        getNoiseCancellationStatus();
+        getEqualizerStatus();
+        getConcertHallStatus();
     }
 
 

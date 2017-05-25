@@ -95,7 +95,6 @@ public class ZikConnection {
     public State.Battery getBattery() {
         write(Protocol.getRequest(Constants.BatteryGet));
         read();
-
         return state.getBattery();
     }
 

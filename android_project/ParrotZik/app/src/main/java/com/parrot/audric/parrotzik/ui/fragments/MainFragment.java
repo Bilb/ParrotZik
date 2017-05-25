@@ -17,6 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 
 import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.FragmentMainBinding;
@@ -47,6 +54,8 @@ public class MainFragment extends Fragment {
     }
 
     BluetoothHeadset mBluetoothHeadset;
+
+    private boolean isLoadingFinished = false;
 
 
 
@@ -204,7 +213,7 @@ public class MainFragment extends Fragment {
         setTagColor(binding.titleEq, colorNotConnected);
 
         binding.customProgressBar.setProgress(0);
-        
+
 
         binding.ancButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,60 +239,90 @@ public class MainFragment extends Fragment {
             }
         });
 
+
+        final RotateAnimation animRotate = new RotateAnimation(0.0f, -358.0f,
+                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+
+        animRotate.setDuration(1500);
+        animRotate.setRepeatCount(-1);
+        animRotate.setFillAfter(true);
+        animRotate.setInterpolator(new LinearInterpolator());
+
+        binding.customProgressBar.setProgress(1);
+        binding.customProgressBar.startAnimation(animRotate);
+
+        animRotate.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if(isLoadingFinished) {
+                    animation.cancel();
+                    updateUI(zikConnection.getState());
+                }
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 BluetoothDevice zik = zikBluetoothHelperConnector.getZikDevice();
-
-                if (zik != null && (zikConnection == null || !zikConnection.isConnected())) {
+                if (zik != null) {
                     zikConnection = new ZikConnection(zik, getContext());
                     zikConnection.connect();
-                }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        zikConnection.refreshZikState(new ZikConnection.ZiKStateRefreshListnener() {
-                            @Override
-                            public void onZikStateRefreshed(final State state) {
-                                final State.Battery zikBattery = zikConnection.getBattery();
-                                if (zikBattery != null) {
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            switch (zikBattery.state) {
-                                                case CHARGING:
-                                                    binding.chargingIv.setVisibility(View.VISIBLE);
-                                                    break;
-                                                default:
-                                                    binding.chargingIv.setVisibility(View.INVISIBLE);
-                                                    binding.customProgressBar.setProgressWithAnimation(zikBattery.level);
-                                                    ViewUtils.animateTextView(0, zikBattery.level, binding.percentageBatteryTv);
-                                            }
-
-                                            if (state.getNoiseCancellation())
-                                                animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
-                                            else
-                                                animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
-
-                                            if (state.getEqualizer())
-                                                animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
-                                            else
-                                                animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
-
-                                            if (state.getConcertHall())
-                                                animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
-                                            else
-                                                animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
-                                        }
-                                    });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            zikConnection.refreshZikState(new ZikConnection.ZiKStateRefreshListnener() {
+                                @Override
+                                public void onZikStateRefreshed(final State state) {
+                                    isLoadingFinished = true;
                                 }
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+                    });
+                }
+                else {
+                    isLoadingFinished = true;
+                }
             }
         }).start();
+    }
+
+
+
+    private void updateUI(State state) {
+        final State.Battery zikBattery = zikConnection.getBattery();
+        if (zikBattery != null) {
+            switch (zikBattery.state) {
+                case CHARGING:
+                    binding.chargingIv.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    binding.chargingIv.setVisibility(View.INVISIBLE);
+                    binding.customProgressBar.setProgressWithAnimation(zikBattery.level);
+                    ViewUtils.animateTextView(0, zikBattery.level, binding.percentageBatteryTv);
+            }
+
+            if (state.getNoiseCancellation())
+                animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
+            else
+                animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
+
+            if (state.getEqualizer())
+                animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
+            else
+                animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
+
+            if (state.getConcertHall())
+                animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
+            else
+                animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
+        }
     }
 }

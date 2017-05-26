@@ -24,6 +24,7 @@ import com.parrot.audric.parrotzik.R;
 import com.parrot.audric.parrotzik.databinding.FragmentMainBinding;
 import com.parrot.audric.parrotzik.service.ZikBroadcastIntent;
 import com.parrot.audric.parrotzik.ui.Intents;
+import com.parrot.audric.parrotzik.ui.activity.MainActivity;
 import com.parrot.audric.parrotzik.ui.view.ColorUtils;
 import com.parrot.audric.parrotzik.ui.view.ViewUtils;
 import com.parrot.audric.parrotzik.zikapi.State;
@@ -114,30 +115,35 @@ public class MainFragment extends Fragment {
 
 
     private void toggleAnc() {
-        /*boolean currentAnc = zikConnection.toggleAnc();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        boolean currentAnc = mainActivity.getZikService().toggleAnc();
 
         if(currentAnc)
             animateNoiseCancellationChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));*/
+            animateNoiseCancellationChanges(getResources().getColor(R.color.tintDisabled));
     }
 
     private void toggleEqualizer() {
-  /*      boolean currentEqualizer = zikConnection.toggleEqualizer();
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        boolean currentEqualizer = mainActivity.getZikService().toggleEqualizer();
 
         if(currentEqualizer)
             animateEqualizerChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));*/
+            animateEqualizerChanges(getResources().getColor(R.color.tintDisabled));
     }
 
     private void toggleConcertHall() {
-        /*boolean currentConcertHall = zikConnection.toggleConcertHall();
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        boolean currentConcertHall = mainActivity.getZikService().toggleConcertHall();
 
         if(currentConcertHall)
             animateConcertHallChanges(getResources().getColor(R.color.tintEnabled));
         else
-            animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));*/
+            animateConcertHallChanges(getResources().getColor(R.color.tintDisabled));
     }
 
 

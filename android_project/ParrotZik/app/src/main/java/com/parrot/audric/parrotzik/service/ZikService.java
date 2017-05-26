@@ -3,6 +3,7 @@ package com.parrot.audric.parrotzik.service;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -22,9 +23,16 @@ public class ZikService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
+    private final IBinder mBinder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public ZikService getService() {
+            return ZikService.this;
+        }
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -74,12 +82,27 @@ public class ZikService extends Service {
     }
 
 
-
-
     @Override
     public void onDestroy() {
         Toast.makeText(this, "zik service destroyed", Toast.LENGTH_LONG).show();
         if(zikConnection != null && zikConnection.isConnected())
             zikConnection.close();
+    }
+
+
+    public void refreshZikState() {
+        zikConnection.refreshZikState();
+    }
+
+    public boolean toggleAnc() {
+        return zikConnection.toggleAnc();
+    }
+
+    public boolean toggleEqualizer() {
+        return zikConnection.toggleEqualizer();
+    }
+
+    public boolean toggleConcertHall() {
+        return zikConnection.toggleConcertHall();
     }
 }
